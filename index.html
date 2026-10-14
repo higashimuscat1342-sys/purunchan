@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PURU CHAIN</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=M+PLUS+Rounded+1c:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;user-select:none}
+[hidden]{display:none!important}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;color:#dff;font-family:"Orbitron","M PLUS Rounded 1c","Yu Gothic","Meiryo",sans-serif;
+ background:radial-gradient(ellipse at 20% 30%,#3a1a6e88,transparent 55%),radial-gradient(ellipse at 80% 75%,#0b4a8a88,transparent 55%),#05061a}
+#stars{position:absolute;left:0;top:0;width:1px;height:1px;border-radius:50%;animation:tw 4s infinite alternate}
+@keyframes tw{from{opacity:.55}to{opacity:1}}
+canvas{position:absolute;inset:0;width:100%;height:100%}
+#ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:10;background:rgba(3,4,20,.82)}
+#ov.title{background:var(--title-img,none) center/cover no-repeat,#05061a}
+#ready{width:100%;max-width:none;height:100%;justify-content:center;gap:22px;background:none;border:0;box-shadow:none;cursor:pointer}
+#rt{font-size:clamp(22px,3.6vw,44px);font-weight:900;letter-spacing:.08em;color:#fff;text-shadow:0 0 16px #6cf,0 0 32px #6cf;animation:rd 1.4s infinite ease-in-out}
+@keyframes rd{50%{opacity:.35}}
+#rh{font-size:clamp(13px,1.6vw,18px);color:#cfe}
+#clear{width:100%;max-width:none;height:100%;justify-content:center;gap:18px;background:none;border:0;box-shadow:none;cursor:pointer}
+#ct{font-size:clamp(34px,7vw,88px);font-weight:900;letter-spacing:.06em;background:linear-gradient(90deg,#f55,#fb2,#4d6,#4af,#b6f,#f5a);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px #fff8);animation:cp .7s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes cp{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
+#cs{font-size:clamp(15px,2vw,24px);color:#fff;line-height:1.9}
+.btn.danger{border-color:#f66;font-size:15px;padding:10px}
+.btn.danger:hover{box-shadow:0 0 18px #f66;background:linear-gradient(90deg,#6a1a2a,#8a2a3a)}
+#imgwarn{position:absolute;left:12px;bottom:10px;font:700 12px/1.6 "M PLUS Rounded 1c",sans-serif;color:#fc6;text-shadow:0 1px 3px #000;pointer-events:none}
+/* ▼ タイトル画面の配置（数値を変えると位置を調整できます）*/
+#ov.title{--logo-y:2.5%;--menu-y:80%}
+#menu{position:absolute;inset:0;width:auto;padding:0;gap:0;background:none;border:0;box-shadow:none;display:block}
+#menu[hidden]{display:none}
+#logo{position:absolute;left:0;right:0;top:var(--logo-y);display:flex;flex-direction:column;align-items:center;gap:0;pointer-events:none}
+#logo #title{font-size:clamp(26px,4vw,56px);filter:drop-shadow(0 2px 6px #000a)}
+#logo .sub{color:#fff;text-shadow:0 1px 4px #000}
+#mbtns{position:absolute;left:50%;top:var(--menu-y);transform:translate(-50%,-50%);display:flex;gap:14px;width:min(94vw,1000px)}
+#mbtns .btn{flex:1;font-size:clamp(14px,1.5vw,20px);background:rgba(10,16,60,.6);backdrop-filter:blur(3px)}
+#mbtns .btn:hover{background:rgba(40,60,160,.8)}
+.scr{display:flex;flex-direction:column;gap:14px;align-items:center;width:min(92vw,520px);padding:30px;text-align:center;
+ background:rgba(8,12,48,.82);border:2px solid #6cf;border-radius:18px;box-shadow:0 0 30px #6cf6,inset 0 0 30px #6cf2}
+#title{font-size:clamp(34px,7vw,64px);font-weight:900;letter-spacing:.06em;text-shadow:0 0 14px currentColor}
+h2{margin:0;font-size:22px;letter-spacing:.15em;color:#8df}
+.sub{font-size:12px;line-height:1.9;color:#9bd;font-family:"M PLUS Rounded 1c",sans-serif;font-weight:700}
+.btn{width:100%;font:inherit;font-weight:900;font-size:18px;letter-spacing:.12em;padding:13px;color:#dff;cursor:pointer;
+ background:linear-gradient(90deg,#16306a,#3a1a6e);border:2px solid #6cf;border-radius:10px}
+.btn:hover{box-shadow:0 0 18px #6cf;background:linear-gradient(90deg,#1e4a9a,#5a2a9e)}
+.btn.go{background:linear-gradient(90deg,#f46,#fb2,#4d6,#4af,#b6f);color:#fff;border-color:#fff;text-shadow:0 1px 3px #0008}
+.lv{display:flex;gap:8px;width:100%}
+.lv button{flex:1;font:inherit;font-weight:900;font-size:13px;padding:11px 0;border:2px solid;border-radius:10px;background:#0a1038;cursor:pointer}
+.lv button:nth-child(1){color:#4d6;border-color:#4d6}.lv button:nth-child(2){color:#4af;border-color:#4af}.lv button:nth-child(3){color:#f55;border-color:#f55}
+.lv button.on{color:#fff!important;background:currentColor}
+.lv button.on{background:#335}.lv button:nth-child(1).on{background:#2a8c44}.lv button:nth-child(2).on{background:#2a6cc0}.lv button:nth-child(3).on{background:#c03030}
+.row{display:flex;align-items:center;gap:10px;width:100%;font-size:13px}.row span{width:110px;text-align:left}.row input{flex:1}
+.slot{width:100%;text-align:left;font:inherit;padding:10px 14px;color:#dff;background:#0a1038;border:2px solid #4a7;border-radius:10px;cursor:pointer;display:flex;flex-direction:column;gap:3px}
+.slot:hover{border-color:#6cf;box-shadow:0 0 12px #6cf}.slot span{font-size:12px;color:#9bd;font-family:"M PLUS Rounded 1c",sans-serif}
+#sl{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+#pbtn{position:absolute;top:12px;right:14px;z-index:5;width:auto;padding:8px 14px;font-size:13px}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<canvas id="cv"></canvas>
+<button id="pbtn" class="btn" hidden>⏸ PAUSE</button>
+<div id="ov">
+ <section class="scr" id="menu">
+  <div id="logo">
+  <div id="title"><span style="color:#f55">P</span><span style="color:#f92">U</span><span style="color:#fd3">R</span><span style="color:#4d6">U</span><span style="color:#4af">N</span> <span style="color:#b6f">C</span><span style="color:#f5a">H</span><span style="color:#f55">A</span><span style="color:#4af">N</span></div>
+  <div class="sub" id="sub">【宇宙女子を救う物語】</div>
+  </div>
+  <div id="imgwarn" hidden></div>
+  <div id="mbtns">
+  <button class="btn" id="bStory">ストーリー</button>
+  <button class="btn" data-go="sel">フリーモード</button>
+  <button class="btn" id="bLoad">ロード</button>
+  <button class="btn" data-go="set">設定</button>
+  </div>
+ </section>
+ <section class="scr" id="sel" hidden>
+  <h2>FREE MODE</h2>
+  <div class="sub">同じ色を4つ以上くっつけて消そう。連鎖を狙え！<br>← → 移動 ／ ↑ 回転 ／ ↓ 加速 ／ Space 即落下 ／ Esc ポーズ</div>
+  <div class="lv" id="lv"><button data-l="easy">かんたん</button><button data-l="normal" class="on">ふつう</button><button data-l="hard">むずかしい</button></div>
+  <button class="btn go" id="start">出撃！</button>
+  <button class="btn" data-go="menu">戻る</button>
+ </section>
+ <section class="scr" id="set" hidden>
+  <h2>SETTINGS</h2>
+  <label class="row"><span>BGM音量</span><input type="range" id="sBgm" min="0" max="100"></label>
+  <label class="row"><span>効果音</span><input type="range" id="sSe" min="0" max="100"></label>
+  <label class="row"><span>文字速度</span><input type="range" id="sTxt" min="1" max="100"></label>
+  <button class="btn danger" id="bDel">セーブデータを削除</button>
+  <div class="sub">※環境によってはBGMが再生されない場合があります。</div>
+  <button class="btn" id="setBack">戻る</button>
+ </section>
+ <section class="scr" id="slots" hidden>
+  <h2 id="sh">LOAD</h2><div id="sl"></div>
+  <button class="btn" id="slBack">戻る</button>
+ </section>
+ <section class="scr" id="pause" hidden>
+  <h2>PAUSE</h2>
+  <button class="btn" id="bResume">再開</button><button class="btn" id="bSave">セーブ</button>
+  <button class="btn" id="bPset">設定</button><button class="btn" id="bQuit">メニューへ</button>
+ </section>
+ <section class="scr" id="ready" hidden>
+  <div id="rt">タップもしくはクリックで始める</div>
+  <div class="sub" id="rh">同じ色のプルンを4つ以上くっつけて破壊。<br>連鎖させるとスコアが一気に増える！<br><br>← → 移動 ／ ↑ 回転 ／ ↓ 加速 ／ Space 即落下</div>
+ </section>
+ <section class="scr" id="clear" hidden>
+  <div id="ct">STAGE CLEAR!</div>
+  <div class="sub" id="cs"></div>
+  <div class="sub" style="opacity:.7">クリックで続ける</div>
+ </section>
+ <section class="scr" id="over" hidden>
+  <h2>GAME OVER</h2><div class="sub" id="ovt" style="font-size:16px"></div>
+  <button class="btn go" id="bAgain">もう一回！</button><button class="btn" data-go="menu">メニューへ</button>
+ </section>
+</div>
+
+<script>
+(() => {
+  const COLS = 6, ROWS = 12;
+  const COLORS = ["", "#ff5a5a", "#4aa3ff", "#4cd964", "#ffd23f", "#b56cff"];
+  // n: 色の数（多いほど連鎖が作りにくい）／ t: 落下間隔(ms)
+  const LEVELS = {easy:{n:3, t:900}, normal:{n:4, t:700}, hard:{n:5, t:520}};
+  const FONT = '"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Yu Gothic","Meiryo",sans-serif';
+  const SAT = [[-1,0],[0,1],[1,0],[0,-1]];   // 子コアの位置：上・右・下・左
+  const BTN = ["◀", "⟳", "▼", "▶"], BTNC = ["#4aa3ff", "#4cd964", "#ffb020", "#ff5a8a"];
+
+  let level = "normal";
+  const $ = id => document.getElementById(id);
+  const cv = $("cv"), ctx = cv.getContext("2d"), ov = $("ov");
+  const title = $("title"), sub = $("sub"), startBtn = $("start"), lvBox = $("lv");
+  const markLevel = () => [...lvBox.children].forEach(b => b.classList.toggle("on", b.dataset.l === level));
+  lvBox.addEventListener("click", e => { const l = e.target.dataset && e.target.dataset.l; if (l){ level = l; markLevel(); } });
+
+  // BGMファイル（index.html と同じフォルダに置く）。複数書くとゲーム開始ごとにランダムで選ばれる
+  const BGM_FILES = ["data/bgm1.mp3", "data/bgm2.mp3", "data/bgm3.mp3", "data/bgm4.mp3", "data/bgm5.mp3"];
+  let lastBgm = -1;
+  const bgm = new Audio(); bgm.loop = true; bgm.volume = 0.6; bgm.preload = "auto";
+  let bgmOn = true;
+  function bgmPlay(){
+    if (!bgmOn || EMB) return;
+    try { let k; do { k = Math.floor(Math.random() * BGM_FILES.length); } while (k === lastBgm && BGM_FILES.length > 1); lastBgm = k; bgm.src = BGM_FILES[k]; bgm.currentTime = 0; bgm.play().catch(() => {}); } catch(e){}
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) bgm.pause();
+    else if (bgmOn && (phase === "fall" || phase === "gravity" || phase === "clear")) bgm.play().catch(() => {});
+  });
+
+  let grid, piece, queue, phase = "idle", score, chain, maxChain, pieces, best = 0;
+  let lastDrop = 0, lastStep = 0, clearAt = 0, clearSet = [], popup = {t:"", at:-1e9};
+  let held = new Map(), gest = new Map(), keySoft = false;
+  let L = {};
+
+  const rnd = () => 1 + Math.floor(Math.random() * LEVELS[level].n);
+  const bestKey = () => "chaincore_best_" + level;
+  const loadBest = () => { try { best = parseInt(localStorage.getItem(bestKey()), 10) || 0; } catch(e){ best = 0; } };
+  const saveBest = () => { try { localStorage.setItem(bestKey(), best); } catch(e){} };
+
+  function layout(){
+    const dpr = window.devicePixelRatio || 1, W = innerWidth, H = innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const cell = Math.floor((H - 48) / ROWS), bx = Math.round((W - cell * COLS) / 2), by = Math.round((H - cell * ROWS) / 2);
+    L = {W, H, st:0, cell, bx, by, bb:by + cell * ROWS, btnY:1e9, btnH:0, btnX:0, btnW:1};
+  }
+  addEventListener("resize", layout);
+  addEventListener("orientationchange", () => setTimeout(layout, 200));
+
+  const free = (r, c) => c >= 0 && c < COLS && r >= 0 && r < ROWS && !grid[r][c];
+  const sat = p => ({r:p.r + SAT[p.o][0], c:p.c + SAT[p.o][1]});
+  const valid = p => { const s = sat(p); return free(p.r, p.c) && free(s.r, s.c); };
+
+  function begin(sv){
+    layout(); if (sv) level = sv.level; markLevel(); loadBest();
+    grid = sv ? sv.grid.map(r => r.slice()) : Array.from({length:ROWS}, () => Array(COLS).fill(0));
+    queue = sv ? sv.queue.slice() : []; score = sv ? sv.score : 0; chain = 0; maxChain = sv ? sv.maxChain : 0; pieces = sv ? sv.pieces : 0;
+    clearSet = []; held.clear(); gest.clear(); popup = {t:"", at:-1e9}; paused = false;
+    show(""); bgmPlay(); if (EMB) parent.postMessage({puru:1, bgm:"resume"}, "*");
+    spawn(performance.now());
+    $("pbtn").hidden = false;
+  }
+  function spawn(now){ if (GOAL && score >= GOAL){ win(now); return; }
+    while (queue.length < 3) queue.push({a:rnd(), b:rnd()});
+    const q = queue.shift();
+    piece = {c:2, r:1, o:0, a:q.a, b:q.b};
+    pieces++; lastDrop = now; phase = "fall";
+    if (!valid(piece)) finish();
+  }
+  function finish(){
+    phase = "over"; piece = null; try { bgm.pause(); } catch(e){}
+    failSound(); if (EMB) parent.postMessage({puru:1, bgm:"pause"}, "*");   // BGMを止めて失敗音（ストーリー内では親側のBGMも止める）
+    if (score > best){ best = score; saveBest(); }
+    if (EMB){ $("ovt").innerHTML = "目標スコア " + GOAL + "<br>あなたのスコア " + score + "<br><br>もう一度トライしますか？"; show("over"); return; }
+    $("ovt").innerHTML = "スコア " + score + "<br>ベスト " + best + "<br>最大連鎖 " + maxChain; show("over");
+  }
+
+  const dropT = () => Math.max(130, LEVELS[level].t - Math.floor(pieces / 6) * 20);
+  function tryMove(dc){ const np = {...piece, c:piece.c + dc}; if (valid(np)){ piece = np; return true; } return false; }
+  function rotate(d){ se(520, .05);
+    const np = {...piece, o:(piece.o + d + 4) % 4};
+    if (valid(np)){ piece = np; return; }
+    for (const [dc, dr] of [[-1,0],[1,0],[0,-1]]){
+      const k = {...np, c:np.c + dc, r:np.r + dr};
+      if (valid(k)){ piece = k; return; }
+    }
+  }
+  function hardDrop(now){
+    while (valid({...piece, r:piece.r + 1})) piece.r++;
+    lock(now);
+  }
+  function lock(now){ se(180, .06, "square");
+    const s = sat(piece);
+    grid[piece.r][piece.c] = piece.a; grid[s.r][s.c] = piece.b;
+    piece = null; chain = 0; phase = "gravity"; lastStep = now;
+  }
+  function stepGravity(){
+    let moved = false;
+    for (let c = 0; c < COLS; c++)
+      for (let r = ROWS - 2; r >= 0; r--)
+        if (grid[r][c] && !grid[r + 1][c]){ grid[r + 1][c] = grid[r][c]; grid[r][c] = 0; moved = true; }
+    return moved;
+  }
+  function findGroups(now){
+    const seen = Array.from({length:ROWS}, () => Array(COLS).fill(false)), out = [];
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++){
+      if (!grid[r][c] || seen[r][c]) continue;
+      const col = grid[r][c], stack = [[r, c]], cells = []; seen[r][c] = true;
+      while (stack.length){
+        const [y, x] = stack.pop(); cells.push([y, x]);
+        for (const [dy, dx] of [[1,0],[-1,0],[0,1],[0,-1]]){
+          const ny = y + dy, nx = x + dx;
+          if (ny >= 0 && ny < ROWS && nx >= 0 && nx < COLS && !seen[ny][nx] && grid[ny][nx] === col){ seen[ny][nx] = true; stack.push([ny, nx]); }
+        }
+      }
+      if (cells.length >= 4) out.push(...cells);
+    }
+    if (!out.length){
+      if (chain > 0 && grid.every(r => r.every(v => !v))){ score += 3000; popup = {t:"全消し！ +3000", at:now, d:2200}; se(990, .5, "triangle"); }
+      spawn(now); return;
+    }
+    clearSet = out; chain++; maxChain = Math.max(maxChain, chain); clearAt = now; phase = "clear";
+    if (chain >= 2) popup = {t:chain + " れんさ！", at:now};
+  }
+  function doClear(now){ se(600 + chain * 90, .22, "triangle");
+    for (const [r, c] of clearSet) grid[r][c] = 0;
+    score += clearSet.length * 10 * chain * chain;
+    clearSet = []; phase = "gravity"; lastStep = now;
+  }
+
+  function update(now){
+    if (phase === "fall" && piece){
+      for (const h of held.values()) if ((h.b === 0 || h.b === 3) && now >= h.next){ tryMove(h.b === 0 ? -1 : 1); h.next = now + 70; }
+      const soft = keySoft || [...held.values()].some(h => h.b === 2);
+      if (now - lastDrop >= (soft ? 40 : dropT())){
+        lastDrop = now;
+        const np = {...piece, r:piece.r + 1};
+        if (valid(np)){ piece = np; if (soft) score++; } else lock(now);
+      }
+    } else if (phase === "gravity"){
+      if (now - lastStep >= 55){ lastStep = now; if (!stepGravity()) findGroups(now); }
+    } else if (phase === "clear" && now - clearAt >= 380) doClear(now);
+  }
+
+  let T = 0;
+  const DARK = ["", "#d93030", "#2a73d6", "#25a845", "#e0a800", "#8a45d6"];
+  const rrect = (x, y, w, h, r) => { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); };
+
+  // ぷるぷるした目つきのプルン
+  function orb(x, y, r, v, a = 1, white = false){
+    const w = Math.sin(T / 220 + x * .05) * .035, rx = r * (1 + w), ry = r * (1 - w);
+    ctx.globalAlpha = a;
+    if (white) ctx.fillStyle = "#fff";
+    else {
+      const g = ctx.createRadialGradient(x - r * .35, y - r * .4, r * .08, x, y, r * 1.1);
+      g.addColorStop(0, "#fff"); g.addColorStop(.22, COLORS[v]); g.addColorStop(1, DARK[v]);
+      ctx.fillStyle = g;
+    }
+    ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, 7); ctx.fill();
+    if (!white) for (const s of [-1, 1]){
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.ellipse(x + s * r * .32, y + r * .05, r * .2, r * .26, 0, 0, 7); ctx.fill();
+      ctx.fillStyle = "#2b1030"; ctx.beginPath(); ctx.arc(x + s * r * .32, y + r * .1, r * .1, 0, 7); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function draw(now){
+    T = now;
+    const {W, H, st, cell, bx, by, bb} = L, R = cell * .44, bwid = cell * COLS;
+    ctx.clearRect(0, 0, W, H);
+
+    // 盤面
+    const rb = ctx.createLinearGradient(bx, by, bx + bwid, bb);
+    ["#66ccff", "#bb66ff", "#ff66cc", "#66ccff"].forEach((c, i, a) => rb.addColorStop(i / (a.length - 1), c));
+    ctx.shadowColor = "#6cf"; ctx.shadowBlur = 20; rrect(bx - 5, by - 5, bwid + 10, cell * ROWS + 10, 14); ctx.fillStyle = rb; ctx.fill(); ctx.shadowBlur = 0;
+    rrect(bx, by, bwid, cell * ROWS, 10); ctx.fillStyle = "rgba(6,8,34,.9)"; ctx.fill();
+    ctx.strokeStyle = "rgba(120,200,255,.14)"; ctx.lineWidth = 1;
+    for (let i = 1; i < COLS; i++){ ctx.beginPath(); ctx.moveTo(bx + i * cell, by); ctx.lineTo(bx + i * cell, bb); ctx.stroke(); }
+    for (let i = 1; i < ROWS; i++){ ctx.beginPath(); ctx.moveTo(bx, by + i * cell); ctx.lineTo(bx + bwid, by + i * cell); ctx.stroke(); }
+
+    const cx = c => bx + c * cell + cell / 2, cy = r => by + r * cell + cell / 2;
+    const clearing = new Set(clearSet.map(([r, c]) => r * COLS + c));
+    // くっつき表示
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++){
+      const v = grid[r][c]; if (!v) continue;
+      ctx.fillStyle = COLORS[v];
+      if (c + 1 < COLS && grid[r][c + 1] === v) ctx.fillRect(cx(c), cy(r) - R * .62, cell, R * 1.24);
+      if (r + 1 < ROWS && grid[r + 1][c] === v) ctx.fillRect(cx(c) - R * .62, cy(r), R * 1.24, cell);
+    }
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++){
+      const v = grid[r][c]; if (!v) continue;
+      const hit = clearing.has(r * COLS + c) && Math.floor(now / 70) % 2;
+      orb(cx(c), cy(r), R, v, 1, !!hit);
+    }
+    // 操作中のプルンと落下予想
+    if (piece){
+      let g = {...piece}; while (valid({...g, r:g.r + 1})) g.r++;
+      if (g.r !== piece.r){
+        const gs = sat(g); ctx.lineWidth = 3;
+        for (const [p, v] of [[g, piece.a], [gs, piece.b]]){
+          ctx.strokeStyle = COLORS[v]; ctx.globalAlpha = .6; ctx.setLineDash([6, 5]);
+          ctx.beginPath(); ctx.arc(cx(p.c), cy(p.r), R, 0, 7); ctx.stroke();
+        }
+        ctx.setLineDash([]); ctx.globalAlpha = 1; ctx.lineWidth = 1;
+      }
+      const s = sat(piece);
+      orb(cx(piece.c), cy(piece.r), R, piece.a); orb(cx(s.c), cy(s.r), R, piece.b);
+      ctx.strokeStyle = "rgba(90,42,74,.55)"; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx(piece.c), cy(piece.r), R + 3, 0, 7); ctx.stroke(); ctx.lineWidth = 1;
+    }
+
+    // HUD（左：スコア・操作 / 右：NEXT）
+    const pw = Math.min(190, bx - 20), lx = bx - pw - 14, rx = bx + bwid + 14;
+    const panel = (x, y, w, h, t) => {
+      rrect(x, y, w, h, 12); ctx.fillStyle = "rgba(8,12,48,.8)"; ctx.fill(); ctx.strokeStyle = "#6cf"; ctx.lineWidth = 2; ctx.stroke(); ctx.lineWidth = 1;
+      ctx.fillStyle = "#7ad"; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.font = "900 12px " + FONT; ctx.fillText(t, x + 14, y + 22);
+    };
+    if (pw > 100){
+      panel(lx, by, pw, 165, "SCORE / " + ({easy:"EASY", normal:"NORMAL", hard:"HARD"})[level]);
+      ctx.fillStyle = "#fff"; ctx.font = "900 32px " + FONT; ctx.fillText(score || 0, lx + 14, by + 68);
+      ctx.fillStyle = "#9bd"; ctx.font = "700 12px " + FONT; ctx.fillText("BEST " + best, lx + 14, by + 100); ctx.fillText("MAX CHAIN " + maxChain, lx + 14, by + 124);
+      if (GOAL){ ctx.fillStyle = "#fd3"; ctx.fillText("GOAL " + GOAL, lx + 14, by + 148); }
+      panel(lx, bb - 130, pw, 130, "CONTROLS");
+      ctx.fillStyle = "#9bd"; ctx.font = "700 11px " + FONT;
+      ["← → 移動", "↑ / X 回転　Z 逆回転", "↓ 加速", "Space 即落下", "Esc ポーズ"].forEach((t, i) => ctx.fillText(t, lx + 14, by + cell * ROWS - 82 + i * 19));
+      // NEXT：1組目と2組目が重ならないよう、サイズから位置と枠の高さを計算する
+      const r1 = cell * .4, r2 = cell * .3;
+      panel(rx, by, pw, 36 + r1 * 4 + 16 + r2 * 4 + 16, "NEXT");
+      let ny = by + 36;
+      queue.slice(0, 2).forEach((q, i) => {
+        const rr = i ? r2 : r1, x = rx + pw / 2, y = ny + rr;
+        orb(x, y, rr, q.b); orb(x, y + rr * 2, rr, q.a); ny += rr * 4 + 16;
+      });
+    }
+
+    // 連鎖表示
+    const a = 1 - (now - popup.at) / (popup.d || 1000);
+    if (a > 0){
+      ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.globalAlpha = a; ctx.font = "900 " + Math.round(cell * .85) + "px " + FONT;
+      const py = by + cell * 5 - (1 - a) * 30;
+      ctx.lineJoin = "round"; ctx.lineWidth = 9; ctx.strokeStyle = "#102"; ctx.strokeText(popup.t, W / 2, py);
+      ctx.fillStyle = "#7ff"; ctx.fillText(popup.t, W / 2, py);
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  function frame(){
+    requestAnimationFrame(frame);
+    const now = performance.now();
+    if (phase !== "idle" && phase !== "over" && !paused) update(now);
+    if (L.cell){ if (phase !== "idle") draw(now); else ctx.clearRect(0, 0, L.W, L.H); }
+  }
+
+  // 入力：下のボタン（長押し対応）／盤面ジェスチャー
+  cv.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    if (phase !== "fall" || !piece || paused) return;
+    try { cv.setPointerCapture(e.pointerId); } catch(_){}
+    if (e.clientY >= L.btnY - 6){
+      const b = Math.floor((e.clientX - L.btnX) / L.btnW);
+      if (b < 0 || b > 3) return;
+      if (b === 1) { rotate(1); held.set(e.pointerId, {b, next:Infinity}); return; }
+      if (b === 0 || b === 3) tryMove(b === 0 ? -1 : 1);
+      held.set(e.pointerId, {b, next:performance.now() + 200});
+    } else {
+      gest.set(e.pointerId, {x:e.clientX, y:e.clientY, ax:e.clientX, t:performance.now(), moved:false});
+    }
+  });
+  cv.addEventListener("pointermove", e => {
+    const g = gest.get(e.pointerId); if (!g || !piece) return;
+    const step = L.cell * .85;
+    while (Math.abs(e.clientX - g.ax) >= step){
+      const d = e.clientX > g.ax ? 1 : -1; tryMove(d); g.ax += d * step; g.moved = true;
+    }
+  });
+  const release = e => {
+    held.delete(e.pointerId);
+    const g = gest.get(e.pointerId); gest.delete(e.pointerId);
+    if (!g || e.type === "pointercancel" || phase !== "fall" || !piece) return;
+    const dx = e.clientX - g.x, dy = e.clientY - g.y;
+    if (!g.moved && Math.abs(dx) < 12 && Math.abs(dy) < 12 && performance.now() - g.t < 350) rotate(1);
+    else if (!g.moved && dy > L.cell * 1.6 && Math.abs(dx) < dy * .6) hardDrop(performance.now());
+  };
+  cv.addEventListener("pointerup", release);
+  cv.addEventListener("pointercancel", release);
+
+  addEventListener("keydown", e => {
+    if (phase !== "fall" || !piece || paused) return;
+    const k = e.key;
+    if (k === "ArrowLeft" || k === "a") tryMove(-1);
+    else if (k === "ArrowRight" || k === "d") tryMove(1);
+    else if (k === "ArrowUp" || k === "w" || k === "x") rotate(1);
+    else if (k === "z") rotate(-1);
+    else if (k === "ArrowDown" || k === "s") keySoft = true;
+    else if (k === " ") { e.preventDefault(); if (!e.repeat) hardDrop(performance.now()); }
+  });
+  addEventListener("keyup", e => { if (e.key === "ArrowDown" || e.key === "s") keySoft = false; });
+  document.addEventListener("contextmenu", e => e.preventDefault());
+  document.addEventListener("touchmove", e => e.preventDefault(), {passive:false});
+  startBtn.addEventListener("click", () => begin());
+
+
+  // ===== ストーリー埋め込みモード（novel.html の @puzzle から ?embed=1&level=..&goal=.. で呼ばれる）=====
+  const P = new URLSearchParams(location.search), EMB = P.get("embed") === "1", GOAL = +P.get("goal") || 0;
+  if (P.get("level") in LEVELS) level = P.get("level");
+  let cleared = false;
+  function win(now){
+    phase = "over"; piece = null; cleared = false; clearSound();
+    $("cs").innerHTML = "目標スコア " + GOAL + " を達成！<br>SCORE " + score + "　／　最大連鎖 " + maxChain; show("clear");
+    const go = () => { if (cleared) return; cleared = true; parent.postMessage({puru:1, result:"clear", score, maxChain}, "*"); };
+    $("clear").onclick = go; setTimeout(go, 4000);   // クリックで先へ。操作しなくても4秒で自動で進む
+  }
+  // ===== メニュー・設定・セーブ =====
+  const S = Object.assign({bgm:.6, se:.6, txt:60}, (() => { try { return JSON.parse(localStorage.getItem("puru_set")) } catch(e){} })());
+  const saveS = () => { try { localStorage.setItem("puru_set", JSON.stringify(S)); } catch(e){} bgm.volume = S.bgm; };
+  bgm.volume = S.bgm;
+  [["sBgm","bgm"],["sSe","se"],["sTxt","txt"]].forEach(([id,k]) => {
+    const e = $(id); e.value = k === "txt" ? S[k] : S[k] * 100;
+    e.oninput = () => { S[k] = k === "txt" ? +e.value : e.value / 100; saveS(); if (k === "se") se(660); };
+  });
+  const AC = window.AudioContext || window.webkitAudioContext; let ac;
+  function se(f, d = .08, t = "sine"){
+    if (!S.se) return;
+    try { ac = ac || new AC(); const o = ac.createOscillator(), g = ac.createGain(); o.type = t; o.frequency.value = f; g.gain.value = S.se * .18;
+      o.connect(g); g.connect(ac.destination); o.start(); g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + d); o.stop(ac.currentTime + d); } catch(e){}
+  }
+  const scrs = [...document.querySelectorAll(".scr")];
+  // タイトル背景：title.jpg を優先し、無ければ他の拡張子も探す。見つからなければ画面に探した場所を表示
+  (() => {
+    const names = ["title.jpg", "title.jpeg", "title.png", "title.webp", "title.JPG", "title.PNG"];
+    const tryLoad = i => {
+      if (i >= names.length){ const w = $("imgwarn"); w.hidden = false; w.textContent = "背景画像が見つかりません：" + new URL("data/title.jpg", location.href).href; return; }
+      const im = new Image(); im.onload = () => ov.style.setProperty("--title-img", 'url("data/' + names[i] + '")'); im.onerror = () => tryLoad(i + 1); im.src = "data/" + names[i];
+    };
+    tryLoad(0);
+  })();
+  // 失敗音：下がっていく「ぷわ〜ん」系のトロンボーン風（WebAudioで自動生成。効果音の音量設定に連動）
+  function failSound(){
+    if (!S.se) return;
+    try {
+      ac = ac || new AC(); if (ac.state === "suspended") ac.resume();
+      const t0 = ac.currentTime + .05, g = ac.createGain(), f = ac.createBiquadFilter();
+      f.type = "lowpass"; f.frequency.value = 900; g.gain.value = S.se * .22; f.connect(g); g.connect(ac.destination);
+      [[392, .3], [370, .3], [349, .3], [330, 1.1]].reduce((t, [hz, d], i, arr) => {
+        const o = ac.createOscillator(), e = ac.createGain(); o.type = "sawtooth"; o.frequency.setValueAtTime(hz, t);
+        if (i === arr.length - 1){ o.frequency.linearRampToValueAtTime(hz * .78, t + d);
+          const l = ac.createOscillator(), lg = ac.createGain(); l.frequency.value = 6; lg.gain.value = hz * .02; l.connect(lg); lg.connect(o.frequency); l.start(t); l.stop(t + d); }
+        e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(1, t + .04); e.gain.exponentialRampToValueAtTime(.0001, t + d);
+        o.connect(e); e.connect(f); o.start(t); o.stop(t + d + .05); return t + d;
+      }, t0);
+    } catch(e){}
+  }
+  // クリア音：上昇アルペジオ＋和音のファンファーレ（WebAudioで自動生成。効果音の音量に連動）
+  function clearSound(){
+    if (!S.se) return;
+    try {
+      ac = ac || new AC(); if (ac.state === "suspended") ac.resume();
+      const t0 = ac.currentTime + .05, g = ac.createGain(); g.gain.value = S.se * .2; g.connect(ac.destination);
+      const note = (hz, t, d, type, pk) => { const o = ac.createOscillator(), e = ac.createGain(); o.type = type; o.frequency.value = hz;
+        e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(pk, t + .02); e.gain.exponentialRampToValueAtTime(.0001, t + d);
+        o.connect(e); e.connect(g); o.start(t); o.stop(t + d + .05); };
+      [523, 659, 784, 1047].forEach((hz, i) => note(hz, t0 + i * .13, .25, "square", .45));
+      [523, 659, 784, 1047, 1319].forEach(hz => note(hz, t0 + .62, 1.4, "triangle", .5));
+    } catch(e){}
+  }
+  $("bDel").onclick = () => {
+    if (!confirm("セーブデータ（6スロット）をすべて削除します。\nよろしいですか？")) return;
+    try { localStorage.removeItem("puru_saves"); } catch(e){}
+    $("bDel").textContent = "削除しました"; setTimeout(() => $("bDel").textContent = "セーブデータを削除", 1800);
+  };
+  function show(id){ ov.classList.toggle("title", phase === "idle" && !EMB); scrs.forEach(s => s.hidden = s.id !== id); ov.hidden = !id; $("pbtn").hidden = !!id || phase === "idle"; }
+  document.querySelectorAll("[data-go]").forEach(b => b.onclick = () => { if (b.dataset.go === "menu") toMenu(); else show(b.dataset.go); });
+  let paused = false, back = "menu";
+  function toMenu(){ if (EMB){ parent.postMessage({puru:1, result:"giveup", score, maxChain}, "*"); return; } phase = "idle"; paused = false; piece = null; try { bgm.pause(); } catch(e){} show("menu"); }
+  function pauseGame(){ paused = true; show("pause"); }
+  function resume(){ paused = false; lastDrop = performance.now(); show(""); }
+  $("pbtn").onclick = pauseGame; $("bResume").onclick = resume; $("bQuit").onclick = toMenu;
+  $("bAgain").onclick = () => begin();
+  $("bPset").onclick = () => { back = "pause"; show("set"); };
+  $("setBack").onclick = () => { show(back); back = "menu"; };
+  document.querySelector('[data-go="set"]').addEventListener("click", () => back = "menu");
+  $("bStory").onclick = () => { location.href = "data/novel.html"; };
+  addEventListener("keydown", e => { if (e.key === "Escape"){ if (paused) resume(); else if (phase === "fall" && piece && ov.hidden) pauseGame(); } });
+
+  const SK = "puru_saves", getSaves = () => { try { return JSON.parse(localStorage.getItem(SK)) || {}; } catch(e){ return {}; } };
+  function pack(){
+    const q = queue.slice(); if (piece) q.unshift({a:piece.a, b:piece.b});
+    return {mode:"free", level, grid:grid.map(r => r.slice()), queue:q, score, maxChain, pieces:Math.max(0, pieces - 1), label:"フリー(" + level + ") " + score + "pt"};
+  }
+  function slots(mode){
+    $("sh").textContent = mode === "save" ? "SAVE" : "LOAD"; const d = getSaves(), box = $("sl"); box.innerHTML = "";
+    for (let i = 1; i <= 6; i++){
+      const s = d[i], b = document.createElement("button"); b.className = "slot";
+      b.innerHTML = "<b>SLOT " + i + "</b><span>" + (s ? s.label + "<br>" + s.time : "— EMPTY —") + "</span>";
+      b.onclick = () => {
+        if (mode === "save"){ const o = getSaves(); o[i] = {...pack(), time:new Date().toLocaleString("ja-JP")}; try { localStorage.setItem(SK, JSON.stringify(o)); } catch(e){} slots("save"); }
+        else if (s){ if (s.mode === "story") location.href = "data/novel.html?load=" + i; else begin(s); }
+      };
+      box.appendChild(b);
+    }
+    show("slots");
+  }
+  $("bLoad").onclick = () => { back = "menu"; slots("load"); };
+  $("bSave").onclick = () => slots("save");
+  $("slBack").onclick = () => show(paused ? "pause" : "menu");
+  (() => { const s = []; for (let i = 0; i < 150; i++) s.push(Math.random() * 100 + "vw " + Math.random() * 100 + "vh 0 " + (Math.random() < .2 ? 1 : 0) + "px rgba(255,255,255," + (Math.random() * .8 + .2) + ")"); $("stars").style.boxShadow = s.join(","); })();
+
+  layout(); markLevel(); queue = []; grid = Array.from({length:ROWS}, () => Array(COLS).fill(0)); score = 0; maxChain = 0;
+  show(EMB ? "" : "menu"); frame(); if (EMB){ $("bSave").hidden = true; $("bAgain").textContent = "はい"; document.querySelector("#over [data-go]").textContent = "いいえ"; show("ready"); $("ready").onclick = () => begin(); addEventListener("keydown", e => { if (e.key === "Enter" && phase === "idle") begin(); }); }
+})();
+</script>
+</body>
+</html>
