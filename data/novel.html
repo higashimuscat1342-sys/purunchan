@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PURU CHAIN - STORY</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=M+PLUS+Rounded+1c:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;user-select:none}
+[hidden]{display:none!important}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#dff;font-family:"M PLUS Rounded 1c","Yu Gothic","Meiryo",sans-serif}
+#stage{position:absolute;left:50%;top:50%;width:min(100vw,177.78vh);height:min(56.25vw,100vh);transform:translate(-50%,-50%);overflow:hidden;background:#05061a}
+#bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 30%,#3a1a6e,transparent 60%),radial-gradient(ellipse at 80% 80%,#0b4a8a,transparent 60%),#05061a;background-size:cover;background-position:center}
+.ch{position:absolute;bottom:0;height:92%;display:flex;align-items:flex-end;justify-content:center;width:34%;transition:opacity .3s}
+.ch img{max-height:100%;max-width:100%}
+.ph{width:60%;height:80%;display:flex;align-items:center;justify-content:center;border:2px dashed #6cf8;border-radius:40% 40% 0 0;background:#6cf2;color:#8df;font-weight:700;font-size:calc(var(--u)*2.2)}
+#cL{left:2%}#cC{left:33%}#cR{right:2%}
+#win{position:absolute;left:4%;right:4%;bottom:10%;height:26%;padding:calc(var(--u)*2.6) calc(var(--u)*3) calc(var(--u)*1.5);background:rgba(6,10,44,.84);border:2px solid #6cf;border-radius:14px;box-shadow:0 0 22px #6cf5}
+#nm{position:absolute;left:calc(var(--u)*2);top:calc(var(--u)*-2.2);padding:3px calc(var(--u)*2.4);font:900 calc(var(--u)*2) Orbitron,"M PLUS Rounded 1c",sans-serif;background:linear-gradient(90deg,#16306a,#5a2a9e);border:2px solid #6cf;border-radius:8px}
+#tx{font-size:calc(var(--u)*2.2);line-height:1.75;white-space:pre-wrap;font-weight:500}
+#arw{position:absolute;right:calc(var(--u)*2);bottom:calc(var(--u)*1);color:#6cf;animation:bl 1s infinite}
+@keyframes bl{50%{opacity:.2}}
+#bar{position:absolute;left:4%;right:4%;bottom:2%;display:flex;gap:6px;justify-content:flex-end}
+#bar button,.b{font:700 calc(var(--u)*1.2)/1 Orbitron,sans-serif;padding:calc(var(--u)*.8) calc(var(--u)*1.4);color:#9df;background:rgba(6,10,44,.85);border:1px solid #6cf;border-radius:6px;cursor:pointer}
+#bar button:hover,.b:hover{background:#1e4a9a;color:#fff}#bar button.on{background:#f5a;color:#fff;border-color:#fff}
+#choices{position:absolute;inset:0;display:flex;flex-direction:column;gap:calc(var(--u)*1.6);align-items:center;justify-content:center}
+#choices button{width:50%;font:700 calc(var(--u)*2.2) "M PLUS Rounded 1c",sans-serif;padding:calc(var(--u)*1.4);color:#fff;background:rgba(10,20,70,.92);border:2px solid #6cf;border-radius:12px;cursor:pointer}
+#choices button:hover{background:#3a1a8e;box-shadow:0 0 18px #6cf}
+#pz{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:9;background:#05061a}
+#wf{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:3}
+#epsel{position:absolute;inset:0;background:rgba(2,4,24,.6);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--u)*1.8);z-index:5}
+#epsel h2{margin:0;font:900 calc(var(--u)*3.6) Orbitron,sans-serif;color:#8df;letter-spacing:.2em;text-shadow:0 0 14px #6cf}
+#eplist{display:flex;flex-direction:column;gap:calc(var(--u)*1.1);width:36%}
+#eplist .sl{font-size:calc(var(--u)*2.3);text-align:center;font-weight:700;letter-spacing:.2em}
+#win, #bar{transition:opacity .35s}
+#stage.intro #win, #stage.intro #bar{opacity:0;pointer-events:none}   /* 話の開始直後、最初の文章が出るまで枠とボタンを隠し、文章と一緒にふわっと出す */
+#bk{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none}
+#fx{position:absolute;inset:0;background:#000;opacity:1;pointer-events:none;transition:opacity .45s;display:flex;align-items:center;justify-content:center;font:900 calc(var(--u)*4) Orbitron,sans-serif;color:#6cf}
+#panel{position:absolute;inset:0;background:rgba(2,4,24,.93);display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*1.2);padding:calc(var(--u)*3);overflow:auto;z-index:5}
+#panel h2{margin:0;font:900 calc(var(--u)*2.6) Orbitron,sans-serif;color:#8df;letter-spacing:.15em}
+#pb{width:min(100%,70%);display:flex;flex-direction:column;gap:calc(var(--u)*.8);font-size:calc(var(--u)*1.8)}
+.lg{padding:6px 10px;border-bottom:1px solid #6cf3}.lg b{color:#8df;margin-right:10px}
+.sl{text-align:left;font:inherit;color:#dff;padding:calc(var(--u)*1) calc(var(--u)*1.6);background:#0a1038;border:2px solid #4a7;border-radius:10px;cursor:pointer}.sl:hover{border-color:#6cf}
+.rw{display:flex;gap:12px;align-items:center}.rw span{width:30%}.rw input{flex:1}
+.shake{animation:sk .4s}@keyframes sk{20%{transform:translate(calc(-50% - 12px),-50%)}40%{transform:translate(calc(-50% + 12px),-50%)}60%{transform:translate(calc(-50% - 8px),-50%)}80%{transform:translate(calc(-50% + 8px),-50%)}}
+</style>
+</head>
+<body>
+<div id="stage">
+ <div id="bg"></div>
+ <div class="ch" id="cL"></div><div class="ch" id="cC"></div><div class="ch" id="cR"></div>
+ <div id="bk"></div>
+ <div id="win"><div id="nm"></div><div id="tx"></div><i id="arw" hidden>▼</i></div>
+ <div id="bar"><button data-a="auto">AUTO</button><button data-a="skip">SKIP</button><button data-a="hide">HIDE</button><button data-a="log">LOG</button><button data-a="save">SAVE</button><button data-a="load">LOAD</button><button data-a="cfg">CONFIG</button><button data-a="home">TITLE</button></div>
+ <div id="choices" hidden></div>
+ <div id="wf"></div>
+ <div id="fx"></div>
+ <div id="epsel" hidden><h2>STORY</h2><div id="eplist"></div><button class="b" id="epback">タイトルへ戻る</button></div>
+ <div id="panel" hidden><h2 id="ph"></h2><div id="pb"></div><button class="b" id="pc">CLOSE</button></div>
+</div>
+
+<!-- シナリオは ep1.js 〜 ep4.js に分かれています（第一話〜第四話）。本文の編集はそちらで行います -->
+<script>const EPISODES = {};</script>
+<script src="ep1.js"></script>
+<script src="ep2.js"></script>
+<script src="ep3.js"></script>
+<script src="ep4.js"></script>
+
+<script>
+// ===== 素材フォルダ設定（ここを変えれば置き場所を変更できます）=====
+const DIR = {bg:"", ch:"", bgm:"", se:""}, EXT = ".jpg";
+// @bgm random で、この中からランダムに1曲選んで流します（曲名を増やす・変えるときはここを編集）
+const RANDOM_BGM = ["bgm1.mp3", "bgm2.mp3", "bgm3.mp3", "bgm4.mp3", "bgm5.mp3"]; let lastRnd = -1;
+// ===================================================================
+const $ = id => document.getElementById(id), stage = $("stage"), tx = $("tx"), nm = $("nm"), arw = $("arw");
+const S = Object.assign({bgm:.6, se:.6, txt:60}, (() => { try { return JSON.parse(localStorage.getItem("puru_set")) } catch(e){} })());
+let LINES = [], LAB = {}, epNum = 1;
+function loadEpisode(n){
+  epNum = n; LINES = (EPISODES[n] ? EPISODES[n].script : "").split("\n").map(s => s.trim()); LAB = {};
+  LINES.forEach((s, i) => { if (s[0] === "*") LAB[s.slice(1)] = i; });
+}
+let pc = 0, cur = 0, F = {}, bgName = "", chs = {L:"", C:"", R:""}, bgmName = "", chap = "", log = [];
+let full = "", idx = 0, typing = false, auto = false, skip = false, timer = 0, lock = false, waiting = false;
+const POS = {"左":"L", "中":"C", "右":"R", L:"L", C:"C", R:"R"};
+const bgm = new Audio(); bgm.loop = true; bgm.volume = S.bgm;
+const u = () => stage.style.setProperty("--u", stage.clientWidth / 100 + "px"); addEventListener("resize", u); u();
+const saveS = () => { try { localStorage.setItem("puru_set", JSON.stringify(S)); } catch(e){} bgm.volume = S.bgm; };
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function setBg(n){ if (n === "none") n = ""; bgName = n; $("bg").style.backgroundImage = n ? 'url("' + DIR.bg + n + EXT + '"),radial-gradient(ellipse at 30% 30%,#3a1a6e,transparent 60%)' : ""; }
+function setCh(p, n){
+  chs[p] = n; const e = $("c" + p); e.innerHTML = ""; if (!n) return;
+  const im = new Image(); im.src = DIR.ch + n + EXT; im.onerror = () => { e.innerHTML = '<div class="ph">' + n + '</div>'; }; e.appendChild(im);
+}
+let fadeTimer = 0;
+function fadeBgm(ms){   // 止めずに進行したまま、音量をms秒かけて0にして停止
+  clearInterval(fadeTimer); bgmName = ""; if (bgm.paused) return;
+  const v0 = bgm.volume, t0 = performance.now();
+  fadeTimer = setInterval(() => { const r = Math.min(1, (performance.now() - t0) / ms); bgm.volume = v0 * (1 - r); if (r >= 1){ clearInterval(fadeTimer); bgm.pause(); bgm.volume = S.bgm; } }, 50);
+}
+function setBgm(n){
+  clearInterval(fadeTimer); bgm.volume = S.bgm;
+  if (n === "random"){ let k; do { k = Math.floor(Math.random() * RANDOM_BGM.length); } while (k === lastRnd && RANDOM_BGM.length > 1); lastRnd = k; n = RANDOM_BGM[k]; }
+  bgmName = n; if (!n || n === "stop"){ bgm.pause(); bgmName = ""; return; } bgm.src = DIR.bgm + n; bgm.play().catch(() => {}); }
+function playSe(n){ const a = new Audio(DIR.se + n); a.volume = S.se; a.play().catch(() => {}); }
+let fading = false, blackOn = false;
+async function fade(f){
+  if (skip){ f(); return; }   // スキップ中は暗転を省略
+  const x = $("fx"), dark = getComputedStyle(x).opacity > .9; fading = true;
+  x.style.opacity = 1; if (!dark) await sleep(450);
+  f(); await sleep(150); x.style.opacity = 0; await sleep(450); fading = false;
+}
+
+function say(n, t){
+  stage.classList.remove("intro"); t = t.replace(/\\n/g, "\n"); cur = pc - 1; log.push([n, t]); if (log.length > 200) log.shift();
+  nm.textContent = n; nm.hidden = !n; full = t; idx = 0; typing = true; tx.textContent = ""; arw.hidden = true; tick();
+}
+function tick(){
+  clearTimeout(timer); if (!typing) return;
+  if (skip || idx >= full.length){ idx = full.length; tx.textContent = full; typing = false; arw.hidden = false;
+    if (skip) timer = setTimeout(next, 70); else if (auto) timer = setTimeout(next, 900 + full.length * 45); return; }
+  tx.textContent = full.slice(0, ++idx); timer = setTimeout(tick, 105 - S.txt);
+}
+// スキップ開始：文字送り中なら即表示、表示済みなら今すぐ次の行へ（押しても反応しない問題の対策）
+function kick(){ if (typing) tick(); else next(); }
+function next(){ if (lock || waiting) return; if (typing){ typing = false; idx = full.length; tx.textContent = full; arw.hidden = false; if (auto) timer = setTimeout(next, 900 + full.length * 45); return; } clearTimeout(timer); step(); }
+
+function jump(l){ if (!(l in LAB)) { alert("ラベルが見つかりません: " + l); return; } pc = LAB[l]; }
+function judge(f, op, v){
+  const a = F[f] || 0, b = isNaN(v) ? v : +v;
+  return {"==":a == b, "!=":a != b, ">=":a >= b, "<=":a <= b, ">":a > b, "<":a < b}[op];
+}
+async function cmd(c, a, raw){
+  switch (c){
+    case "bg": if (a[1] === "fade"){ lock = true; await fade(() => setBg(a[0])); lock = false; } else setBg(a[0]); break;
+    case "show": setCh(POS[a[0]], a[1]); break;
+    case "hide": if (a[0] === "all") ["L","C","R"].forEach(p => setCh(p, "")); else setCh(POS[a[0]], ""); break;
+    case "bgm": if (a[0] === "stop" && a[1] === "fade") fadeBgm(+a[2] || 3000); else setBgm(a[0]); break;
+    case "se": playSe(a[0]); break;
+    case "chapter": chap = raw.replace(/^@chapter\s*/, ""); break;
+    case "set": case "add": { const m = a.join("").match(/^(\w+)([+-]?)=?(-?\d+|.+)$/); if (m){ const v = isNaN(m[3]) ? m[3] : +m[3]; F[m[1]] = m[2] ? (F[m[1]] || 0) + (m[2] === "-" ? -v : v) : v; } break; }
+    case "if": if (judge(a[0], a[1], a[2])) jump(a[3]); break;
+    case "jump": jump(a[0]); break;
+    case "wait": if (skip) break; waiting = true; await sleep(+a[0] || 500); waiting = false; break;
+    case "window": $("win").hidden = ["off", "hide"].includes(a[0]); break;
+    case "flash": { if (skip) break; const n = Math.min(+a[0] || 3, 10), w = $("wf"); waiting = true;
+      for (let i = 0; i < n; i++){ w.style.transition = "none"; w.style.opacity = 1; await sleep(80); w.style.transition = "opacity .2s"; w.style.opacity = 0; await sleep(250); }
+      waiting = false; break; }
+    case "black": { const off = a[0] === "off", ms = (+(off ? a[1] : a[0])) || 800, e = $("bk");
+      blackOn = !off; e.style.transition = skip ? "none" : "opacity " + ms + "ms"; e.style.opacity = off ? 0 : 1;
+      if (skip) break; waiting = true; await sleep(ms); waiting = false; break; }
+    case "shake": stage.classList.remove("shake"); void stage.offsetWidth; stage.classList.add("shake"); break;
+    case "choice": {
+      stage.classList.remove("intro");
+      cur = pc - 1; const box = $("choices"); box.innerHTML = ""; box.hidden = false; lock = true; auto = skip = false; syncBar();
+      raw.replace(/^@choice\s*/, "").split("|").forEach(s => { const [t, l] = s.split(">").map(x => x.trim());
+        const b = document.createElement("button"); b.textContent = t; b.onclick = e => { e.stopPropagation(); box.hidden = true; lock = false; jump(l); step(); }; box.appendChild(b); });
+      return true; }
+    case "puzzle": { stage.classList.remove("intro");   // @puzzle 難易度 目標スコア クリア時ラベル [失敗時ラベル]
+      lock = true; auto = skip = false; syncBar(); clearTimeout(timer);
+      const [lv, goal, win, lose] = a, f = document.createElement("iframe"); f.id = "pz";
+      f.src = "../index.html?embed=1&level=" + lv + "&goal=" + goal; f.onload = () => f.contentWindow.focus(); stage.appendChild(f);
+      const r = await new Promise(res => { const h = e => { if (!e.data || !e.data.puru) return;
+        if (e.data.bgm){ if (e.data.bgm === "pause"){ clearInterval(fadeTimer); bgm.pause(); } else if (bgmName){ bgm.volume = S.bgm; bgm.play().catch(() => {}); } return; }   // パズル側からのBGM停止・再開の通知
+        removeEventListener("message", h); res(e.data); }; addEventListener("message", h); });
+      f.remove(); lock = false; F.score = r.score; F.chain = r.maxChain; F.clear = r.result === "clear" ? 1 : 0;
+      if (r.result === "clear") jump(win); else { location.href = "../index.html"; return true; }   // 「いいえ」でタイトルへ戻る（失敗時ラベルは使わない）
+      return false; }
+    case "end": { lock = true; const x = $("fx"); auto = false;   // 暗転とENDを同時に出す（途中で画面が明るく戻らないように）
+      x.textContent = (EPISODES[epNum] ? EPISODES[epNum].title : "") + "　END"; x.style.opacity = 1; await sleep(skip ? 600 : 2650); location.href = "novel.html"; return true; }   // 終わったら話数選択へ
+    default: console.warn("不明なコマンド:", raw);
+  }
+  return false;
+}
+async function step(){
+  while (pc < LINES.length){
+    const s = LINES[pc++]; if (!s || s.startsWith("//") || s[0] === "*") continue;
+    if (s[0] === "@"){ const [c, ...a] = s.slice(1).split(/\s+/); if (await cmd(c, a, s)) return; continue; }
+    const m = s.match(/^([^「」]{1,12})「([\s\S]*)」$/); say(m ? m[1] : "", m ? m[2] : s); return;
+  }
+  cmd("end", [], "@end");
+}
+
+// ===== セーブ / ロード =====
+const SK = "puru_saves", getSaves = () => { try { return JSON.parse(localStorage.getItem(SK)) || {}; } catch(e){ return {}; } };
+function snap(){ return {mode:"story", label:"ストーリー " + chap + "　" + (full || "").slice(0, 14), time:new Date().toLocaleString("ja-JP"), pc:cur, bg:bgName, ch:{...chs}, bgm:bgmName, bk:blackOn, ep:epNum, F:{...F}, chap, log:log.slice(-60)}; }
+function restore(s){
+  loadEpisode(s.ep || 1); stage.classList.remove("intro"); $("epsel").hidden = true; $("bar").hidden = false;
+  pc = s.pc; F = s.F; chap = s.chap; log = s.log || []; setBg(s.bg); ["L","C","R"].forEach(p => setCh(p, s.ch[p])); setBgm(s.bgm); blackOn = !!s.bk; $("bk").style.transition = "none"; $("bk").style.opacity = blackOn ? 1 : 0;
+  $("choices").hidden = true; $("win").hidden = false; lock = false; waiting = false; panel(false); step();
+}
+function panel(show, title, fill){ $("panel").hidden = !show; if (show){ $("ph").textContent = title; $("pb").innerHTML = ""; fill($("pb")); } }
+function slots(mode){
+  panel(true, mode === "save" ? "SAVE" : "LOAD", box => { const d = getSaves();
+    for (let i = 1; i <= 6; i++){ const s = d[i], b = document.createElement("button"); b.className = "sl";
+      b.innerHTML = "<b>SLOT " + i + "</b><br>" + (s ? s.label + "<br><small>" + s.time + "</small>" : "— EMPTY —");
+      b.onclick = () => { if (mode === "save"){ d[i] = snap(); try { localStorage.setItem(SK, JSON.stringify(d)); } catch(e){} slots("save"); }
+        else if (s){ if (s.mode === "story") restore(s); else location.href = "../index.html"; } };
+      box.appendChild(b); } });
+}
+function config(){
+  panel(true, "CONFIG", box => { [["BGM音量","bgm",100],["効果音","se",100],["文字速度","txt",1]].forEach(([t, k, m]) => {
+    const r = document.createElement("label"); r.className = "rw"; r.innerHTML = "<span>" + t + "</span>";
+    const e = document.createElement("input"); e.type = "range"; e.min = m == 1 ? 1 : 0; e.max = 100; e.value = m == 1 ? S[k] : S[k] * 100;
+    e.oninput = () => { S[k] = m == 1 ? +e.value : e.value / 100; saveS(); }; r.appendChild(e); box.appendChild(r); });
+    const d = document.createElement("button"); d.className = "b"; d.textContent = "セーブデータを削除"; d.style.marginTop = "calc(var(--u)*1.5)"; d.style.borderColor = "#f66";
+    d.onclick = () => { if (!confirm("セーブデータ（6スロット）をすべて削除します。\nよろしいですか？")) return; try { localStorage.removeItem(SK); } catch(e){} d.textContent = "削除しました"; setTimeout(() => d.textContent = "セーブデータを削除", 1800); };
+    box.appendChild(d); });
+}
+function syncBar(){ document.querySelector('[data-a="auto"]').classList.toggle("on", auto); document.querySelector('[data-a="skip"]').classList.toggle("on", skip); }
+$("bar").onclick = e => {
+  e.stopPropagation(); const a = e.target.dataset.a; if (!a) return;
+  if (a === "auto"){ auto = !auto; skip = false; if (auto && !typing) timer = setTimeout(next, 600); }
+  else if (a === "skip"){ skip = !skip; auto = false; if (skip) kick(); }
+  else if (a === "hide"){ $("win").hidden = !$("win").hidden; }
+  else if (a === "log") panel(true, "LOG", box => { log.forEach(([n, t]) => { const d = document.createElement("div"); d.className = "lg"; d.innerHTML = "<b></b><span></span>"; d.children[0].textContent = n; d.children[1].textContent = t; box.appendChild(d); }); setTimeout(() => $("panel").scrollTop = 1e6); });
+  else if (a === "save") slots("save"); else if (a === "load") slots("load"); else if (a === "cfg") config();
+  else if (a === "home" && confirm("タイトル（index.html）へ戻りますか？")) location.href = "../index.html";
+  syncBar();
+};
+$("pc").onclick = () => panel(false);
+stage.onclick = e => { if (!$("panel").hidden) return; if (!$("win").hidden) { skip = auto = false; syncBar(); next(); } else $("win").hidden = false; };
+stage.oncontextmenu = e => { e.preventDefault(); $("win").hidden = !$("win").hidden; };
+addEventListener("wheel", e => { if (!$("panel").hidden) return; if (e.deltaY > 0) next(); else $("bar").querySelector('[data-a="log"]').click(); });
+addEventListener("keydown", e => {
+  if (e.key === "Escape") panel(false);
+  else if (!$("panel").hidden) return;
+  else if (["Enter", " ", "ArrowDown"].includes(e.key)){ e.preventDefault(); next(); }
+  else if (e.key === "Control"){ if (!e.repeat){ skip = true; auto = false; kick(); syncBar(); } }
+  else if (e.key.toLowerCase() === "h"){ $("win").hidden = !$("win").hidden; }
+  else if (e.key.toLowerCase() === "a"){ $("bar").querySelector('[data-a="auto"]').click(); }
+});
+addEventListener("keyup", e => { if (e.key === "Control"){ skip = false; syncBar(); } });
+
+// ===== 起動（index.html の「ロード」から ?load=番号 で来た場合はそのスロットから再開）=====
+// ===== 話数選択（「ストーリー」を押すと最初に出る画面）=====
+function startEpisode(n){
+  if (!EPISODES[n]) return; loadEpisode(n); $("epsel").hidden = true; $("bar").hidden = false; F = {}; log = []; chap = EPISODES[n].title || "";
+  setBg(""); ["L","C","R"].forEach(p => setCh(p, "")); blackOn = false; $("bk").style.transition = "none"; $("bk").style.opacity = 0;
+  $("choices").hidden = true; $("win").hidden = false; lock = false; waiting = false; pc = LAB.start || 0;
+  // 黒幕を即座にかけてから始める（開始の瞬間にメッセージ枠やボタンが一瞬見えるのを防ぐ）
+  const x = $("fx"); x.style.transition = "none"; x.style.opacity = 1; void x.offsetWidth; x.style.transition = "";
+  stage.classList.add("intro"); step();
+  setTimeout(() => { if (!fading) x.style.opacity = 0; }, 60);
+}
+function showEpisodes(){
+  const box = $("eplist"); box.innerHTML = "";
+  Object.keys(EPISODES).map(Number).sort((a, b) => a - b).forEach(n => {
+    const b = document.createElement("button"); b.className = "sl"; b.textContent = EPISODES[n].title; b.onclick = () => startEpisode(n); box.appendChild(b); });
+  $("epsel").hidden = false; $("win").hidden = true; $("bar").hidden = true;   // 選択画面の裏にメッセージ枠が透けないように
+}
+$("epback").onclick = () => { location.href = "../index.html"; };
+$("epsel").onclick = e => e.stopPropagation(); $("panel").onclick = e => e.stopPropagation();   // 選択・ロードのクリックが、そのまま「次へ」の操作にならないように
+const Q = new URLSearchParams(location.search), ld = Q.get("load"), sv = ld && getSaves()[ld], epq = +Q.get("ep");
+if (sv && sv.mode === "story") restore(sv); else if (epq) startEpisode(epq); else showEpisodes();
+// 起動時は黒幕から始め、最初の命令が暗転でなければそのまま明るくする（インターフェースのちらつき防止）
+setTimeout(() => { if (!fading) $("fx").style.opacity = 0; }, 60);
+</script>
+</body>
+</html>
